@@ -48,7 +48,7 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.HOST }}
-          ssh: ${{ secrets.SSH }}
+          key: ${{ secrets.SSH }}
           port: ${{ secrets.PORT }}
           script: |
             cd /root/realworld-nuxtjs
