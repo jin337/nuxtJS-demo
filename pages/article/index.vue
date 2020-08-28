@@ -4,7 +4,7 @@
       <div class="container">
         <h1>{{ article.title }}</h1>
 
-        <article-meta :article="article" />
+        <article-meta :article="article"></article-meta>
       </div>
     </div>
 
@@ -38,12 +38,12 @@
 <script>
 import { getArticle } from '@/store/api'
 import MarkdownIt from 'markdown-it'
-import ArticleMeta from '@/components/article-meta.vue'
-import ArticleComments from '@/components/article-comments.vue'
+import ArticleMeta from './article-meta.vue'
+import ArticleComments from './article-comments.vue'
 
 export default {
   name: 'article',
-  async asyncData({ query }) {
+  async asyncData ({ query }) {
     if (!query.slug) return
     const { data } = await getArticle(query.slug)
     const { article } = data
@@ -53,7 +53,7 @@ export default {
       article
     }
   },
-  data() {
+  data () {
     return {
       article: {}
     }
@@ -62,17 +62,5 @@ export default {
     ArticleMeta,
     ArticleComments
   },
-  head() {
-    return {
-      title: `${this.article.title} - RealWorld`,
-      meta: [
-        {
-          hid: 'description',
-          name: 'description',
-          content: this.article.description
-        }
-      ]
-    }
-  }
 }
 </script>

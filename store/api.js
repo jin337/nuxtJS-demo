@@ -1,4 +1,4 @@
-import request from '@/plugins/request'
+import { request } from '@/plugins/request'
 
 // 用户登录
 export const login = (data) => {
@@ -35,21 +35,6 @@ export const getProfiles = (username) => {
   })
 }
 
-// 跟随某人
-export const follow = (username) => {
-  return request({
-    method: 'POST',
-    url: `/api/profiles/${username}/follow`
-  })
-}
-// 取消
-export const unFollow = (username) => {
-  return request({
-    method: 'DELETE',
-    url: `/api/profiles/${username}/follow`
-  })
-}
-
 // 获取标签
 export const getTags = () => {
   return request({
@@ -67,7 +52,7 @@ export const getArticles = (params) => {
   })
 }
 
-// 获取公共文章列表
+// 获取你的文章列表
 export const getYourFeedArticles = (params) => {
   return request({
     method: 'GET',
@@ -148,5 +133,21 @@ export const delComment = (slug, id) => {
   return request({
     method: 'DELETE',
     url: `/api/articles/${slug}/comments/${id}`
+  })
+}
+
+// 跟随某人
+export const follow = (username) => {
+  return request({
+    method: 'POST',
+    url: `/api/profiles/${username}/follow`
+  })
+}
+
+// 取消
+export const unFollow = (username) => {
+  return request({
+    method: 'DELETE',
+    url: `/api/profiles/${username}/follow`
   })
 }

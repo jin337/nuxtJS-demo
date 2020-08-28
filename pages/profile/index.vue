@@ -8,7 +8,7 @@
             <h4>{{ profile.username }}</h4>
             <p>{{ profile.bio }}</p>
             <button
-              v-if="user.username != profile.username"
+              v-if="user"
               class="btn btn-sm btn-outline-secondary action-btn"
               :disabled="disabledFollow"
               @click="follow"
@@ -57,12 +57,41 @@
             </ul>
           </div>
 
-          <ArticleItem
-            class="article-preview"
-            v-for="(article, i) in articles"
-            :article="article"
-            :key="i"
-          />
+          <div class="article-preview" v-for="(item, index) in articles" :key="index">
+            <div class="article-meta">
+              <nuxt-link :to="{path: 'profile',query: {username: item.author.username}}">
+                <img :src="item.author.image" />
+              </nuxt-link>
+              <div class="info">
+                <nuxt-link
+                  class="author"
+                  :to="{ path: 'profile',query: {username: item.author.username}}"
+                >{{ item.author.username }}</nuxt-link>
+                <span class="date">{{ item.createdAt | date("MMM DD, YYYY") }}</span>
+              </div>
+              <button
+                class="btn btn-outline-primary btn-sm pull-xs-right"
+                :class="{active: item.favorited}"
+                @click="onFavorite(item)"
+                :disabled="favoriteDisabled"
+              >
+                <i class="ion-heart"></i>
+                {{ item.favoritesCount }}
+              </button>
+            </div>
+            <nuxt-link class="preview-link" :to="{path: 'article',query: {slug: item.slug}}">
+              <h1>{{ item.title }}</h1>
+              <p>{{ item.description }}</p>
+              <span>Read more...</span>
+              <ul class="tag-list">
+                <li
+                  class="tag-default tag-pill tag-outline"
+                  v-for="tag in item.tagList"
+                  :key="tag"
+                >{{ tag }}</li>
+              </ul>
+            </nuxt-link>
+          </div>
           <div class="col-md-3">
             <el-pagination
               v-if="totalPage > 1"
@@ -71,7 +100,7 @@
               @current-change="pageChange"
               :total="articlesCount"
             ></el-pagination>
-            <!-- <nav>
+            <nav>
               <ul class="pagination" v-if="totalPage > 1">
                 <li
                   class="page-item"
@@ -90,11 +119,10 @@
                         page: item,
                       },
                     }"
-                    >{{ item }}</nuxt-link
-                  >
+                  >{{ item }}</nuxt-link>
                 </li>
               </ul>
-            </nav>-->
+            </nav>
           </div>
         </div>
       </div>
@@ -103,18 +131,15 @@
 </template>
 
 <script>
-import ArticleItem from '@/components/Article.vue'
 import { getArticles, getProfiles, follow, unFollow } from '@/store/api'
 import { mapState } from 'vuex'
 
 export default {
-  middleware: 'authenticated',
+  middleware: 'notAuthenticated',
   name: 'profile',
-  components: {
-    ArticleItem
-  },
-  watchQuery: ['page', 'tab'],
-  async asyncData({ query }) {
+  watchQuery: ['page', 'tab', 'limit', 'username'],
+  async asyncData ({ query }) {
+
     let page = Number.parseInt(query.page) || 1
     let limit = 5
     let offset = (page - 1) * limit
@@ -124,25 +149,27 @@ export default {
       offset,
       tab
     }
+
     let getArticle =
       tab == 'favorite'
         ? getArticles({ ...param, favorited: query.username })
         : getArticles({ ...param, author: query.username })
-    let [{ data }, { data: articles }] = await Promise.all([
-      getProfiles(query.username),
-      getArticle
-    ])
-    console.log(data)
+
+    let { data: Profiles } = await getProfiles(query.username)
+    let { data: Articles } = await getArticle
+    const { profile } = Profiles
+    const { articles } = Articles
+
     return {
       tab,
       page,
       limit,
       offset,
-      ...data,
-      ...articles
+      profile,
+      articles
     }
   },
-  data() {
+  data () {
     return {
       tabs: [
         {
@@ -159,17 +186,20 @@ export default {
   },
   computed: {
     ...mapState(['user']),
-    totalPage() {
+    totalPage () {
       return Math.ceil(this.articlesCount / this.limit) || 1
+    },
+    favoriteDisabled () {
+      return !this.user
     }
   },
-  created() {
+  created () {
     if (this.user) {
       this.disabledFollow = this.user.username == this.profile.username
     }
   },
   methods: {
-    async follow() {
+    async follow () {
       if (this.disabledFollow) return
       try {
         this.disabledFollow = true
@@ -179,13 +209,11 @@ export default {
           await follow(this.profile.username)
         }
         this.profile.following = !this.profile.following
-      } catch (err) {
-        console.log(err)
-      } finally {
+      } catch (err) { } finally {
         this.disabledFollow = false
       }
     },
-    pageChange(page) {
+    pageChange (page) {
       this.loadStatus = 0
       this.$router.replace({
         name: this.$route.name,

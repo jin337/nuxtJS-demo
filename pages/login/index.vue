@@ -11,9 +11,7 @@
           </p>
 
           <ul class="error-messages">
-            <template v-for="(messages, field) in errors">
-              <li v-for="(message, index) in messages" :key="index">{{ field }} {{ message }}</li>
-            </template>
+            <li v-for="(messages, field) in errors" :key="field">{{ field }} {{ messages }}</li>
           </ul>
 
           <form @submit.prevent="onSubmit">
@@ -58,17 +56,18 @@
 <script>
 import { login, register } from '@/store/api'
 
+// 仅在客户端加载 js-cookie 包
 const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
   middleware: 'notAuthenticated',
-  name: 'RegisterIndex',
+  name: 'LoginIndex',
   computed: {
-    isLogin() {
+    isLogin () {
       return this.$route.name === 'login'
     }
   },
-  data() {
+  data () {
     return {
       user: {
         username: '',
@@ -80,21 +79,20 @@ export default {
   },
 
   methods: {
-    async onSubmit() {
+    async onSubmit () {
       try {
         const { data } = this.isLogin
           ? await login({
-              user: this.user
-            })
+            user: this.user
+          })
           : await register({
-              user: this.user
-            })
+            user: this.user
+          })
 
         this.$store.commit('setUser', data.user)
 
         Cookie.set('user', data.user)
 
-        // 跳转到首页
         this.$router.push('/')
       } catch (err) {
         this.errors = err.response.data.errors

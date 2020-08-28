@@ -65,10 +65,9 @@ import { publishArticle, getArticle, modifyArticle, getTags } from '@/store/api'
 import { mapState } from 'vuex'
 
 export default {
-  // 在路由匹配组件渲染之前会先执行中间件处理
   middleware: 'authenticated',
   name: 'EditorIndex',
-  data() {
+  data () {
     return {
       disabled: false,
       slug: this.$route.query.slug,
@@ -84,11 +83,11 @@ export default {
   computed: {
     ...mapState(['user'])
   },
-  created() {
+  created () {
     this.init()
   },
   methods: {
-    async publish() {
+    async publish () {
       const { article } = this
       this.disabled = true
       if (this.slug) {
@@ -102,19 +101,19 @@ export default {
         path: '/article?slug=' + this.slug
       })
     },
-    init() {
+    init () {
       if (this.slug) {
         this.getDetail()
       }
       this.getTags()
     },
-    async getTags() {
+    async getTags () {
       const {
         data: { tags }
       } = await getTags()
       this.allTag = tags.reverse()
     },
-    async getDetail() {
+    async getDetail () {
       const { data } = await getArticle(this.slug)
       const { article } = data
       Object.keys(this.article).forEach((key) => {

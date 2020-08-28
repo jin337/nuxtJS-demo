@@ -1,6 +1,6 @@
 {
-  "name": "realworld-nuxtjs",
-  "version": "0.0.1",
+  "name": "realworld-nuxt",
+  "version": "1.0.0",
   "main": "index.js",
   "license": "ISC",
   "scripts": {
@@ -13,12 +13,8 @@
     "axios": "^0.20.0",
     "cookieparser": "^0.1.0",
     "dayjs": "^1.8.34",
-    "element-ui": "^2.13.2",
     "js-cookie": "^2.2.1",
     "markdown-it": "^11.0.0",
-    "nuxt": "^2.14.3"
-  },
-  "devDependencies": {
-    "babel-plugin-component": "^1.1.1"
+    "nuxt": "^2.14.4"
   }
 }

@@ -77,65 +77,71 @@ export default {
   computed: {
     ...mapState(['user'])
   },
-  data() {
+  data () {
     return {
       favoriteDisabled: false,
       followDisabled: false
     }
   },
   methods: {
-    edit() {
-      this.$router.push({
-        path: '/editor',
-        query: {
-          slug: this.article.slug
-        }
-      })
-    },
-    async del() {
-      await this.$confirm('此操作将删除该评论, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
-      })
-      await delArticle(this.article.slug)
-      this.$router.replace({
-        path: `/profile?username=${this.article.author.username}`
-      })
-    },
-    async favoriteFun() {
-      this.favoriteDisabled = true
-      let { article } = this
-      let favoriteFn = article.favorited ? deleteFavorite : addFavorite
-      await favoriteFn(this.article.slug)
-        .then(() => {
-          if (article.favorited) {
-            article.favoritesCount -= 1
-          } else {
-            article.favoritesCount += 1
+    edit () {
+      if (this.user) {
+        this.$router.push({
+          path: '/editor',
+          query: {
+            slug: this.article.slug
           }
-          article.favorited = !article.favorited
         })
-        .finally(() => {
-          this.favoriteDisabled = false
-        })
+      } else {
+        this.$router.push('/login')
+      }
     },
-    async followFun() {
-      this.followDisabled = true
-      let { author } = this.article
-      let followFun = author.following ? unFollow : follow
-      await followFun(author.username)
-        .then(() => {
-          author.following = !author.following
+    async del () {
+      if (this.user) {
+        await delArticle(this.article.slug)
+        this.$router.replace({
+          path: `/profile?username=${this.article.author.username}`
         })
-        .finally(() => {
-          this.followDisabled = false
-        })
+      } else {
+        this.$router.push('/login')
+      }
+    },
+    async favoriteFun () {
+      if (this.user) {
+        this.favoriteDisabled = true
+        let { article } = this
+        let favoriteFn = article.favorited ? deleteFavorite : addFavorite
+        await favoriteFn(this.article.slug)
+          .then(() => {
+            if (article.favorited) {
+              article.favoritesCount -= 1
+            } else {
+              article.favoritesCount += 1
+            }
+            article.favorited = !article.favorited
+          })
+          .finally(() => {
+            this.favoriteDisabled = false
+          })
+      } else {
+        this.$router.push('/login')
+      }
+    },
+    async followFun () {
+      if (this.user) {
+        this.followDisabled = true
+        let { author } = this.article
+        let followFun = author.following ? unFollow : follow
+        await followFun(author.username)
+          .then(() => {
+            author.following = !author.following
+          })
+          .finally(() => {
+            this.followDisabled = false
+          })
+      } else {
+        this.$router.push('/login')
+      }
     }
   }
 }

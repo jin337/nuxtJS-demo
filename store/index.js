@@ -1,10 +1,7 @@
-const cookieparser = process.server
-  ? require('cookieparser')
-  : require('js-cookie')
+const cookieparser = process.server ? require('cookieparser') : require('js-cookie')
 
 export const state = () => {
   return {
-    // 当前登录用户的登录状态
     user: process.client ? JSON.parse(cookieparser.get('user') || 'null') : null
   }
 }

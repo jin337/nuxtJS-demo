@@ -65,48 +65,40 @@ export default {
       required: true
     }
   },
-  data() {
+  data () {
     return {
       disabled: false,
       comment: {
         body: ''
       },
-      comments: [] // 文章列表
+      comments: []
     }
   },
   computed: {
     ...mapState(['user'])
   },
-  async mounted() {
+  async mounted () {
     this.getComments()
   },
   methods: {
-    async publish() {
-      this.disabled = true
-      try {
-        let res = await publishComments(this.article.slug, this.comment)
-        console.log(res)
-        this.comments.unshift(res.data.comment)
-      } catch (error) {
-        console.log(error)
+    async publish () {
+      if (this.user) {
+        this.disabled = true
+        try {
+          let res = await publishComments(this.article.slug, this.comment)
+          console.log(res)
+          this.comments.unshift(res.data.comment)
+        } catch (error) { }
+        this.disabled = false
+      } else {
+        this.$router.push('/login')
       }
-      this.disabled = false
     },
-    async getComments() {
+    async getComments () {
       const { data } = await getComments(this.article.slug)
       this.comments = data.comments
     },
-    async delComment(id, i) {
-      await this.$confirm('此操作将删除该评论, 是否继续?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
-        })
-      })
+    async delComment (id, i) {
       await delComment(this.article.slug, id)
       this.comments.splice(i, 1)
     }

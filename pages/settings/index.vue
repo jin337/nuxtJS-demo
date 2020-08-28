@@ -69,7 +69,7 @@ export default {
   computed: {
     ...mapState(['user'])
   },
-  data() {
+  data () {
     return {
       form: {
         username: '',
@@ -80,14 +80,14 @@ export default {
       }
     }
   },
-  created() {
+  created () {
     let keys = Object.keys(this.form)
     keys.forEach((key) => {
       this.form[key] = this.user[key]
     })
   },
   methods: {
-    async submit() {
+    async submit () {
       const { data } = await update({
         user: this.form
       })
@@ -95,9 +95,8 @@ export default {
 
       Cookie.set('user', data.user)
       this.$router.replace(`/profile?username=${data.user.username}`)
-      console.log('ok')
     },
-    async logout() {
+    async logout () {
       await this.$confirm('确认退出登录吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
