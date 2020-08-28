@@ -1,5 +1,5 @@
-https://github.com/gothinkster/realworld/tree/master/api
+# 给尊敬的大佬，我这篇作业还没有完成，
 
-https://github.com/gothinkster/realworld-starter-kit/blob/master/FRONTEND_INSTRUCTIONS.md
+# 这边部署一直出问题，还在努力中~
 
-## 一切为了部署测试
+# 请帮我先开之后的模块~ 作业我后期不上，感谢~~！
