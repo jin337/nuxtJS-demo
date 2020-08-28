@@ -15,9 +15,9 @@ jobs:
       # 打包构建
       - name: Build
         uses: actions/setup-node@master
-      - run: yarn
-      - run: yarn build
-      - run: tar -zcvf release.tgz .nuxt static nuxt.config.js package.json yarn.lock p2.config.json
+      - run: npm install
+      - run: npm run build
+      - run: tar -zcvf release.tgz .nuxt static nuxt.config.js package.json package-lock.json p2.config.json
 
       # 发布 Release
       - name: Create Release
@@ -55,5 +55,5 @@ jobs:
             cd /root/realworld-nuxtjs
             wget https://github.com/you9009/realworld-nuxtjs/releases/latest/download/release.tgz -O release.tgz
             tar zxvf release.tgz
-            yarn --production
+            npm install --production
             pm2 reload pm2.config.js
