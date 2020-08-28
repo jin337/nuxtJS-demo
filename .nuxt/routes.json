@@ -1,0 +1,51 @@
+[
+  {
+    "path": "/",
+    "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/layout",
+    "children": [
+      {
+        "path": "/",
+        "name": "home",
+        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/home",
+        "_name": "_79a59e2a"
+      },
+      {
+        "path": "/login",
+        "name": "login",
+        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/login",
+        "_name": "_ba9d9646"
+      },
+      {
+        "path": "/register",
+        "name": "register",
+        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/login",
+        "_name": "_ba9d9646"
+      },
+      {
+        "path": "/profile",
+        "name": "profile",
+        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/profile",
+        "_name": "_d7437bc6"
+      },
+      {
+        "path": "/settings",
+        "name": "settings",
+        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/settings",
+        "_name": "_eeabdba2"
+      },
+      {
+        "path": "/editor",
+        "name": "editor",
+        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/editor",
+        "_name": "_b22ceb0e"
+      },
+      {
+        "path": "/article",
+        "name": "article",
+        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/article",
+        "_name": "_7b28856a"
+      }
+    ],
+    "_name": "_9a8f3794"
+  }
+]
