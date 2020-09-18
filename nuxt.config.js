@@ -1,7 +1,7 @@
 module.exports = {
   mode: 'spa',
   server: {
-    host: '0.0.0.0',
+    host: '111.229.92.196',
     port: 2345
   },
   plugins: ['~/plugins/dayjs.js', '~/plugins/request.js'],
