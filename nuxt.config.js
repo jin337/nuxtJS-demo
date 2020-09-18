@@ -8,7 +8,7 @@ module.exports = {
   router: {
     mode: 'hash',
     linkActiveClass: 'active',
-    extendRoutes(routes, resolve) {
+    extendRoutes (routes, resolve) {
       // 清除基于pages目录默认生成的路由表规则
       routes.splice(0)
       // 自定义路由
