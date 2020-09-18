@@ -1,25 +1,29 @@
-const cookieparser = process.server ? require('cookieparser') : require('js-cookie')
-
 export const state = () => {
   return {
-    user: process.client ? JSON.parse(cookieparser.get('user') || 'null') : null
+    user: null
   }
 }
 
 export const mutations = {
-  setUser(state, data) {
+  setUser (state, data) {
     state.user = data
   }
 }
 
+const cookieparser = process.server ? require('cookieparser') : undefined
+
 export const actions = {
-  nuxtServerInit({ commit }, { req }) {
+  nuxtServerInit ({ commit }, { req }) {
     let user = null
-    if (req && req.headers.cookie) {
+    // 如果请求头中有个Cookie
+    if (req.headers.cookie) {
+      // 使用Cookieparser把cookie字符串转化为JavaScript对象
       const parsed = cookieparser.parse(req.headers.cookie)
       try {
         user = JSON.parse(parsed.user)
-      } catch (err) {}
+      } catch (err) {
+        // No valid cookie found
+      }
     }
     commit('setUser', user)
   }

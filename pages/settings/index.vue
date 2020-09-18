@@ -1,116 +1,115 @@
 <template>
   <div class="settings-page">
-    <div class="container page">
-      <div class="row">
-        <div class="col-md-6 offset-md-3 col-xs-12">
-          <h1 class="text-xs-center">Your Settings</h1>
+  <div class="container page">
+    <div class="row">
 
-          <form @submit.prevent="submit">
-            <fieldset>
+      <div class="col-md-6 offset-md-3 col-xs-12">
+        <h1 class="text-xs-center">Your Settings</h1>
+        <ul class="error-messages">
+          <template v-for="(messages, field) in errors">
+            <li v-for="(message, index) in messages" :key="index">
+              {{ field }} {{ messages}}
+            </li>
+          </template>
+        </ul>
+        <form>
+          <fieldset>
               <fieldset class="form-group">
-                <input
-                  class="form-control"
-                  type="text"
-                  v-model="form.image"
-                  placeholder="URL of profile picture"
-                />
+                <input class="form-control" type="url" placeholder="URL of profile picture" v-model="user.image" required>
               </fieldset>
               <fieldset class="form-group">
-                <input
-                  class="form-control form-control-lg"
-                  v-model="form.username"
-                  type="text"
-                  placeholder="Your Name"
-                />
+                <input class="form-control form-control-lg" type="text" placeholder="Your Name" v-model="user.username" required>
               </fieldset>
               <fieldset class="form-group">
-                <textarea
-                  class="form-control form-control-lg"
-                  v-model="form.bio"
-                  rows="8"
-                  placeholder="Short bio about you"
-                ></textarea>
+                <textarea class="form-control form-control-lg" rows="8" placeholder="Short bio about you" v-model="user.bio" required></textarea>
               </fieldset>
               <fieldset class="form-group">
-                <input
-                  class="form-control form-control-lg"
-                  v-model="form.email"
-                  type="text"
-                  placeholder="Email"
-                />
+                <input class="form-control form-control-lg" type="email" placeholder="Email" v-model="user.email" required>
               </fieldset>
               <fieldset class="form-group">
-                <input
-                  class="form-control form-control-lg"
-                  v-model="form.password"
-                  type="password"
-                  placeholder="Password"
-                  minlength="8"
-                />
+                <input class="form-control form-control-lg" type="password" placeholder="Password" v-model="user.password" required>
               </fieldset>
-              <button class="btn btn-lg btn-primary pull-xs-right">Update Settings</button>
-            </fieldset>
-          </form>
-          <button class="btn btn-outline-danger" @click="logout()">Or click here to logout.</button>
-        </div>
+              <button class="btn btn-lg btn-primary pull-xs-right" @click.prevent="handleSubmit">
+                Update Settings
+              </button>
+          </fieldset>
+        </form>
+        <hr/>
+        <button class="btn btn-outline-danger" @click="logout">
+          Or click here to logout.
+        </button>
       </div>
+
     </div>
   </div>
+</div>
 </template>
 
 <script>
+const Cookie = process.client ? require('js-cookie'): undefined
+import { updateUser } from '@/api/user'
 import { mapState } from 'vuex'
-import { update } from '@/store/api'
-const Cookie = process.client ? require('js-cookie') : undefined
 
 export default {
+  name: 'Settings',
   middleware: 'authenticated',
-  name: 'SettingsIndex',
-  computed: {
-    ...mapState(['user'])
-  },
   data () {
     return {
-      form: {
-        username: '',
-        password: '',
+      user: {
+        bio: '',
         email: '',
         image: '',
-        bio: ''
-      }
+        password: '',
+        username: ''
+      },
+      errors: {} // 错误信息
     }
   },
-  created () {
-    let keys = Object.keys(this.form)
-    keys.forEach((key) => {
-      this.form[key] = this.user[key]
-    })
+  computed: {
+    ...mapState({storeUser: 'user'})
   },
-  methods: {
-    async submit () {
-      const { data } = await update({
-        user: this.form
-      })
-      this.$store.commit('setUser', data.user)
+  
+  mounted () {
+    this.user.bio = this.storeUser.bio
+    this.user.email = this.storeUser.email
+    this.user.image = this.storeUser.image
+    this.user.password = this.storeUser.password
+    this.user.username = this.storeUser.username
+  },
 
-      Cookie.set('user', data.user)
-      this.$router.replace(`/profile?username=${data.user.username}`)
-    },
-    async logout () {
-      await this.$confirm('确认退出登录吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        this.$message({
-          type: 'success',
-          message: '退出成功!'
+  methods: {
+    async handleSubmit () {
+      try {
+        const { data } = await updateUser({
+          user: this.user
         })
-      })
+
+        console.log('data', data)
+
+        // 更新用户的登录状态
+        this.$store.commit('setUser', data.user)
+
+        // 为了防止刷新页面数据丢失，数据需要持久化
+        Cookie.set('user', data.user)
+
+        this.$router.push(`/profile/${data.user.username}`)
+      } catch (e) {
+        this.errors = e.response.data.errors
+      }
+    },
+    logout () {
+      // 删除用户的登录状态
       this.$store.commit('setUser', null)
-      Cookie.remove('user')
-      this.$router.replace('/')
+
+      // 删除数据持久化
+      Cookie.set('user', null)
+      
+      this.$router.push('/')
     }
   }
 }
 </script>
+
+<style scoped>
+
+</style>

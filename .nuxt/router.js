@@ -3,13 +3,13 @@ import Router from 'vue-router'
 import { interopDefault } from './utils'
 import scrollBehavior from './router.scrollBehavior.js'
 
-const _9a8f3794 = () => interopDefault(import('../pages/layout' /* webpackChunkName: "" */))
-const _79a59e2a = () => interopDefault(import('../pages/home' /* webpackChunkName: "" */))
-const _ba9d9646 = () => interopDefault(import('../pages/login' /* webpackChunkName: "" */))
-const _d7437bc6 = () => interopDefault(import('../pages/profile' /* webpackChunkName: "" */))
-const _eeabdba2 = () => interopDefault(import('../pages/settings' /* webpackChunkName: "" */))
-const _b22ceb0e = () => interopDefault(import('../pages/editor' /* webpackChunkName: "" */))
-const _7b28856a = () => interopDefault(import('../pages/article' /* webpackChunkName: "" */))
+const _6090a8f8 = () => interopDefault(import('../pages/layout' /* webpackChunkName: "" */))
+const _af1883a6 = () => interopDefault(import('../pages/home' /* webpackChunkName: "" */))
+const _663c4fdb = () => interopDefault(import('../pages/login' /* webpackChunkName: "" */))
+const _bce2d4ca = () => interopDefault(import('../pages/profile' /* webpackChunkName: "" */))
+const _21842e71 = () => interopDefault(import('../pages/settings' /* webpackChunkName: "" */))
+const _54c1cf3b = () => interopDefault(import('../pages/editor' /* webpackChunkName: "" */))
+const _ef4e4e30 = () => interopDefault(import('../pages/article' /* webpackChunkName: "" */))
 
 // TODO: remove in Nuxt 3
 const emptyFn = () => {}
@@ -21,7 +21,7 @@ Router.prototype.push = function push (location, onComplete = emptyFn, onAbort) 
 Vue.use(Router)
 
 export const routerOptions = {
-  mode: 'hash',
+  mode: 'history',
   base: decodeURI('/'),
   linkActiveClass: 'active',
   linkExactActiveClass: 'nuxt-link-exact-active',
@@ -29,34 +29,34 @@ export const routerOptions = {
 
   routes: [{
     path: "/",
-    component: _9a8f3794,
+    component: _6090a8f8,
     children: [{
-      path: "/",
-      component: _79a59e2a,
+      path: "",
+      component: _af1883a6,
       name: "home"
     }, {
       path: "/login",
-      component: _ba9d9646,
+      component: _663c4fdb,
       name: "login"
     }, {
       path: "/register",
-      component: _ba9d9646,
+      component: _663c4fdb,
       name: "register"
     }, {
-      path: "/profile",
-      component: _d7437bc6,
+      path: "/profile/:username",
+      component: _bce2d4ca,
       name: "profile"
     }, {
       path: "/settings",
-      component: _eeabdba2,
+      component: _21842e71,
       name: "settings"
     }, {
-      path: "/editor",
-      component: _b22ceb0e,
+      path: "/editor/:slug?",
+      component: _54c1cf3b,
       name: "editor"
     }, {
-      path: "/article",
-      component: _7b28856a,
+      path: "/article/:slug",
+      component: _ef4e4e30,
       name: "article"
     }]
   }],

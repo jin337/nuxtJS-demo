@@ -1,51 +1,43 @@
 [
   {
     "path": "/",
-    "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/layout",
+    "component": "/Users/mac/JALProjects/lagou-fed/fed-e-task-03-03/code/realworld-nuxtjs/pages/layout",
     "children": [
       {
-        "path": "/",
         "name": "home",
-        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/home",
-        "_name": "_79a59e2a"
+        "path": "",
+        "component": "/Users/mac/JALProjects/lagou-fed/fed-e-task-03-03/code/realworld-nuxtjs/pages/home"
       },
       {
         "path": "/login",
         "name": "login",
-        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/login",
-        "_name": "_ba9d9646"
+        "component": "/Users/mac/JALProjects/lagou-fed/fed-e-task-03-03/code/realworld-nuxtjs/pages/login"
       },
       {
         "path": "/register",
         "name": "register",
-        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/login",
-        "_name": "_ba9d9646"
+        "component": "/Users/mac/JALProjects/lagou-fed/fed-e-task-03-03/code/realworld-nuxtjs/pages/login"
       },
       {
-        "path": "/profile",
+        "path": "/profile/:username",
         "name": "profile",
-        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/profile",
-        "_name": "_d7437bc6"
+        "component": "/Users/mac/JALProjects/lagou-fed/fed-e-task-03-03/code/realworld-nuxtjs/pages/profile"
       },
       {
         "path": "/settings",
         "name": "settings",
-        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/settings",
-        "_name": "_eeabdba2"
+        "component": "/Users/mac/JALProjects/lagou-fed/fed-e-task-03-03/code/realworld-nuxtjs/pages/settings"
       },
       {
-        "path": "/editor",
+        "path": "/editor/:slug?",
         "name": "editor",
-        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/editor",
-        "_name": "_b22ceb0e"
+        "component": "/Users/mac/JALProjects/lagou-fed/fed-e-task-03-03/code/realworld-nuxtjs/pages/editor"
       },
       {
-        "path": "/article",
+        "path": "/article/:slug",
         "name": "article",
-        "component": "/Users/you/Desktop/Github/Vue/realworld-nuxt/pages/article",
-        "_name": "_7b28856a"
+        "component": "/Users/mac/JALProjects/lagou-fed/fed-e-task-03-03/code/realworld-nuxtjs/pages/article"
       }
-    ],
-    "_name": "_9a8f3794"
+    ]
   }
 ]

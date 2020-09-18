@@ -1,228 +1,225 @@
 <template>
   <div class="profile-page">
-    <div class="user-info" v-if="profile">
-      <div class="container">
-        <div class="row">
-          <div class="col-xs-12 col-md-10 offset-md-1">
-            <img :src="profile.image" class="user-img" />
-            <h4>{{ profile.username }}</h4>
-            <p>{{ profile.bio }}</p>
-            <button
-              v-if="user"
-              class="btn btn-sm btn-outline-secondary action-btn"
-              :disabled="disabledFollow"
-              @click="follow"
-            >
-              <i class="ion-plus-round"></i>
-              &nbsp; {{ profile.following ? "Unf" : "F" }}ollow
-              {{ profile.username }}
-            </button>
-            <nuxt-link
-              ui-sref="app.settings"
-              v-else
-              class="btn btn-sm btn-outline-secondary action-btn"
-              to="/settings"
-            >
-              <i class="ion-gear-a"></i> Edit Profile Settings
-            </nuxt-link>
-          </div>
-        </div>
-      </div>
-    </div>
 
+  <div class="user-info">
     <div class="container">
       <div class="row">
-        <div class="col-xs-12 col-md-10 offset-md-1">
-          <div class="articles-toggle">
-            <ul class="nav nav-pills outline-active">
-              <nuxt-link
-                class="nav-item"
-                v-for="ta in tabs"
-                :key="ta.name"
-                :to="{
-                  path: $route.path,
-                  query: {
-                    ...$route.query,
-                    tab: ta.id,
-                    page: 1,
-                  },
-                }"
-              >
-                <span class="nav-link" :class="{ active: ta.id == tab }">
-                  {{
-                  ta.name
-                  }}
-                </span>
-              </nuxt-link>
-            </ul>
-          </div>
 
-          <div class="article-preview" v-for="(item, index) in articles" :key="index">
-            <div class="article-meta">
-              <nuxt-link :to="{path: 'profile',query: {username: item.author.username}}">
-                <img :src="item.author.image" />
-              </nuxt-link>
-              <div class="info">
-                <nuxt-link
-                  class="author"
-                  :to="{ path: 'profile',query: {username: item.author.username}}"
-                >{{ item.author.username }}</nuxt-link>
-                <span class="date">{{ item.createdAt | date("MMM DD, YYYY") }}</span>
-              </div>
-              <button
-                class="btn btn-outline-primary btn-sm pull-xs-right"
-                :class="{active: item.favorited}"
-                @click="onFavorite(item)"
-                :disabled="favoriteDisabled"
-              >
-                <i class="ion-heart"></i>
-                {{ item.favoritesCount }}
-              </button>
-            </div>
-            <nuxt-link class="preview-link" :to="{path: 'article',query: {slug: item.slug}}">
-              <h1>{{ item.title }}</h1>
-              <p>{{ item.description }}</p>
-              <span>Read more...</span>
-              <ul class="tag-list">
-                <li
-                  class="tag-default tag-pill tag-outline"
-                  v-for="tag in item.tagList"
-                  :key="tag"
-                >{{ tag }}</li>
-              </ul>
-            </nuxt-link>
-          </div>
-          <div class="col-md-3">
-            <el-pagination
-              v-if="totalPage > 1"
-              :page-size="limit"
-              layout="prev, pager, next"
-              @current-change="pageChange"
-              :total="articlesCount"
-            ></el-pagination>
-            <nav>
-              <ul class="pagination" v-if="totalPage > 1">
-                <li
-                  class="page-item"
-                  :class="{
-                    active: item === page,
-                  }"
-                  v-for="item in totalPage"
-                  :key="item"
-                >
-                  <nuxt-link
-                    class="page-link"
-                    :to="{
-                      path: $route.path,
-                      query: {
-                        ...$route.query,
-                        page: item,
-                      },
-                    }"
-                  >{{ item }}</nuxt-link>
-                </li>
-              </ul>
-            </nav>
-          </div>
+        <div class="col-xs-12 col-md-10 offset-md-1">
+          <img :src="profile.image" class="user-img" />
+          <h4>{{profile.username}}</h4>
+          <p>
+            {{profile.bio}}
+          </p>
+          <button
+            class="btn btn-sm btn-outline-secondary action-btn"
+            :class="{ active: profile.following }"
+            @click="onFollow(profile)"
+          >
+            <i class="ion-plus-round"></i>
+            &nbsp;
+            Follow {{profile.username}} 
+          </button>
         </div>
+
       </div>
     </div>
   </div>
+
+  <div class="container">
+    <div class="row">
+
+      <div class="col-xs-12 col-md-10 offset-md-1">
+        <div class="articles-toggle">
+          <ul class="nav nav-pills outline-active">
+            <li class="nav-item">
+              <nuxt-link
+                class="nav-link" 
+                exact
+                :class="{active: tab === 'my'}"
+                :to="{
+                name: 'profile',
+                params: {
+                  profile: profile.username
+                },
+                query: {
+                  tab: 'my'
+                }
+              }">My Articles</nuxt-link>
+            </li>
+            <li class="nav-item">
+              <nuxt-link
+                class="nav-link"
+                exact
+                :class="{active: tab === 'favorited'}"
+                :to="{
+                  name: 'profile',
+                  params: {
+                    profile: profile.username
+                  },
+                  query: {
+                    tab: 'favorited'
+                  }
+                }">Favorited Articles</nuxt-link>
+            </li>
+          </ul>
+        </div>
+
+        <div class="article-preview" v-for="article in articles" :key="article.slug">
+          <div class="article-meta">
+            <nuxt-link :to="{
+              name: 'profile',
+              params: {
+                username: article.author.username
+              }
+            }">
+              <img :src="article.author.image" />
+            </nuxt-link>
+            <div class="info">
+              <nuxt-link
+                :to="{
+                  name: 'profile',
+                  params: {
+                    username: article.author.username
+                  }
+                }"
+                class="author"
+               >
+                {{article.author.username}}
+              </nuxt-link>
+              <span class="date">{{ article.createdAt | date('MMM DD, YYYY') }}</span>
+            </div>
+            <button
+                class="btn btn-outline-primary btn-sm pull-xs-right"
+                :class="{active: article.favorited}"
+                @click="onFavorite(article)"
+                :disabled="article.favoriteDisabled"
+              >
+                <i class="ion-heart"></i> {{article.favoritesCount}}
+              </button>
+          </div>
+          <nuxt-link :to="{
+            name: 'article',
+            params: {
+              slug: article.slug
+            }
+          }" class="preview-link">
+            <h1>{{article.title}}</h1>
+            <p>{{article.description}}</p>
+            <span>Read more...</span>
+            <ul class="tag-list">
+              <li class="tag-default tag-pill tag-outline" v-for="tag in article.tagList" :key="tag">
+                {{tag}}
+              </li>
+            </ul>
+          </nuxt-link>
+        </div>
+        <!-- 分页 -->
+        <nav>
+          <ul class="pagination">
+            <li class="page-item" :class="{active: item === page}" v-for="item in totalPage" :key="item">
+              <nuxt-link class="page-link"
+                :to="{
+                  name: 'profile',
+                  params: {
+                    username: profile.username
+                  },
+                  query: {
+                    page: item,
+                    tab
+                  }
+                }">{{item}}</nuxt-link>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+
+</div>
 </template>
 
 <script>
-import { getArticles, getProfiles, follow, unFollow } from '@/store/api'
 import { mapState } from 'vuex'
-
+import { getProfiles } from '@/api/profile'
+import { getArticles, deleteFavorite, addFavorite, deleteFollow, addFollow } from '@/api/article'
 export default {
-  middleware: 'notAuthenticated',
-  name: 'profile',
-  watchQuery: ['page', 'tab', 'limit', 'username'],
-  async asyncData ({ query }) {
+  name: 'UserProfile',
+  watchQuery: ['tab', 'page'],
+  async asyncData (context) {
 
-    let page = Number.parseInt(query.page) || 1
-    let limit = 5
-    let offset = (page - 1) * limit
-    let tab = query.tab || undefined
-    let param = {
-      limit,
-      offset,
-      tab
-    }
+    const { tab = 'my', page = 1 } = context.query
+    const {username} = context.params
 
-    let getArticle =
-      tab == 'favorite'
-        ? getArticles({ ...param, favorited: query.username })
-        : getArticles({ ...param, author: query.username })
+    const limit = 5
+    const offset = ( page - 1 ) * limit
 
-    let { data: Profiles } = await getProfiles(query.username)
-    let { data: Articles } = await getArticle
-    const { profile } = Profiles
-    const { articles } = Articles
+    const articleParams = tab === 'my'
+    ? { author: username }
+    : { favorited: username }
+
+    articleParams.limit = limit
+    articleParams.offset = offset
+
+    const [profileRes, articlesRes] = await Promise.all([
+      getProfiles(username), getArticles(articleParams)
+    ])
+    const { profile } = profileRes.data
+    const { articles, articlesCount } = articlesRes.data
+    articles.forEach(article => article.favoriteDisabled = false)
 
     return {
       tab,
-      page,
       limit,
-      offset,
+      page,
       profile,
-      articles
-    }
-  },
-  data () {
-    return {
-      tabs: [
-        {
-          name: 'My Articles',
-          id: undefined
-        },
-        {
-          name: 'Favorited Articles',
-          id: 'favorite'
-        }
-      ],
-      disabledFollow: false
+      articles,
+      articlesCount,
     }
   },
   computed: {
     ...mapState(['user']),
     totalPage () {
-      return Math.ceil(this.articlesCount / this.limit) || 1
+      return Math.ceil(this.articlesCount / this.limit)
     },
-    favoriteDisabled () {
-      return !this.user
-    }
-  },
-  created () {
-    if (this.user) {
-      this.disabledFollow = this.user.username == this.profile.username
-    }
   },
   methods: {
-    async follow () {
-      if (this.disabledFollow) return
-      try {
-        this.disabledFollow = true
-        if (this.profile.following) {
-          await unFollow(this.profile.username)
-        } else {
-          await follow(this.profile.username)
-        }
-        this.profile.following = !this.profile.following
-      } catch (err) { } finally {
-        this.disabledFollow = false
+    async onFavorite (article) {
+      if (!this.user ) return this.$router.push('/login')
+      article.favoriteDisabled = true // 禁用点击
+      if(article.favorited) {
+        // 取消点赞
+        await deleteFavorite(article.slug)
+        article.favorited = false
+        article.favoritesCount -= 1
+      } else {
+        // 添加点赞
+        await addFavorite(article.slug)
+        article.favorited = true
+        article.favoritesCount += 1
       }
+      article.favoriteDisabled = false // 允许点击
     },
-    pageChange (page) {
-      this.loadStatus = 0
-      this.$router.replace({
-        name: this.$route.name,
-        query: {
-          ...this.$route.query,
-          page
-        }
-      })
+    async onFollow (author) {
+      if (!this.user ) return this.$router.push('/login')
+      author.followDisabled = true // 禁用点击
+      if(author.following) {
+        // 取消点赞
+        await deleteFollow(author.username)
+        author.following = false
+        author.favoritesCount -= 1
+      } else {
+        // 添加点赞
+        await addFollow(author.username)
+        author.following = true
+        author.followesCount += 1
+      }
+      author.followDisabled = false // 允许点击
     }
   }
 }
 </script>
+
+<style scoped>
+
+</style>

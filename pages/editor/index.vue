@@ -1,77 +1,58 @@
 <template>
   <div class="editor-page">
-    <div class="container page">
-      <div class="row">
-        <div class="col-md-10 offset-md-1 col-xs-12">
-          <form @submit.prevent="publish">
-            <fieldset>
-              <fieldset class="form-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="article.title"
-                  placeholder="Article Title"
-                  required
-                />
-              </fieldset>
-              <fieldset class="form-group">
-                <input
-                  type="text"
-                  class="form-control"
-                  v-model="article.description"
-                  placeholder="What's this article about?"
-                  required
-                />
-              </fieldset>
-              <fieldset class="form-group">
-                <textarea
-                  class="form-control"
-                  rows="8"
-                  v-model="article.body"
-                  placeholder="Write your article (in markdown)"
-                  required
-                ></textarea>
-              </fieldset>
-              <fieldset class="form-group">
-                <el-select
-                  v-model="article.tagList"
-                  multiple
-                  placeholder="Enter tags"
-                  class="form-control"
-                >
-                  <el-option
-                    v-for="tag in allTag"
-                    :key="tag"
-                    v-if="tag && tag.trim()"
-                    :value="tag"
-                    :label="tag"
-                  />
-                </el-select>
-              </fieldset>
-              <button
-                class="btn btn-lg pull-xs-right btn-primary"
-                :disabled="disabled"
-              >Publish Article</button>
+  <div class="container page">
+    <div class="row">
+
+      <div class="col-md-10 offset-md-1 col-xs-12">
+        <ul class="error-messages" v-if="errors">
+          <div v-for="(value, field) in errors" :key="field" class="ng-scope">
+            <li v-for="error in value" :key="error" class="ng-binding ng-scope">
+              {{field}} {{error}}
+            </li>
+          </div>
+        </ul>
+        <form>
+          <fieldset>
+            <fieldset class="form-group">
+                <input type="text" class="form-control form-control-lg" placeholder="Article Title" v-model="article.title" required>
             </fieldset>
-          </form>
-        </div>
+            <fieldset class="form-group">
+                <input type="text" class="form-control" placeholder="What's this article about?" v-model="article.description" required>
+            </fieldset>
+            <fieldset class="form-group">
+                <textarea v-model="article.body" class="form-control" rows="8" placeholder="Write your article (in markdown)" required></textarea>
+            </fieldset>
+            <fieldset class="form-group">
+                <input v-model="tagstr" v-on:keyup.enter="enterTag" type="text" class="form-control" placeholder="Enter tags">
+                <div class="tag-list">
+                  <span v-for="(tag, index) in article.tagList" :key="index" class="tag-default tag-pill">
+                  <i class="ion-close-round" @click="removeTag(index)"></i>
+                  {{tag}}
+                </span>
+                </div>
+            </fieldset>
+            <button @click="submitArticle" class="btn btn-lg pull-xs-right btn-primary" type="button">
+                Publish Article
+            </button>
+          </fieldset>
+        </form>
       </div>
+
     </div>
   </div>
+</div>
 </template>
 
 <script>
-import { publishArticle, getArticle, modifyArticle, getTags } from '@/store/api'
-import { mapState } from 'vuex'
+import { createArticle, getArticle, updateArticle } from '@/api/article'
 
 export default {
-  middleware: 'authenticated',
   name: 'EditorIndex',
+  middleware: 'authenticated',
   data () {
     return {
-      disabled: false,
-      slug: this.$route.query.slug,
-      allTag: [],
+      tagstr: '',
+      errors: null,
       article: {
         title: '',
         description: '',
@@ -80,47 +61,42 @@ export default {
       }
     }
   },
-  computed: {
-    ...mapState(['user'])
-  },
-  created () {
-    this.init()
+  async mounted () {
+    const slug = this.$route.params.slug
+    if (slug) {
+      this.slug = slug
+      const { data } = await getArticle(slug)
+      this.article = data.article
+    }
   },
   methods: {
-    async publish () {
-      const { article } = this
-      this.disabled = true
-      if (this.slug) {
-        await modifyArticle(this.slug, { article })
-      } else {
-        const { data } = await publishArticle({ article })
-        this.slug = data.article.slug
+    enterTag () {
+      this.article.tagList.push(this.tagstr)
+      this.tagstr = ''
+    },
+    removeTag (index) {
+      this.article.tagList.splice(index, 1)
+    },
+    async submitArticle () {
+      try {
+        if (this.slug) {
+          const { data } = await updateArticle(this.slug, {article: this.article})
+          this.$router.push(`/article/${data.article.slug}`)
+        }else {
+          const { data } = await createArticle({
+            article: this.article
+          })
+          this.$router.push(`/article/${data.article.slug}`)
+        }
+      } catch (e) {
+        this.errors = e.response.data.errors
       }
-      this.disabled = false
-      this.$router.replace({
-        path: '/article?slug=' + this.slug
-      })
-    },
-    init () {
-      if (this.slug) {
-        this.getDetail()
-      }
-      this.getTags()
-    },
-    async getTags () {
-      const {
-        data: { tags }
-      } = await getTags()
-      this.allTag = tags.reverse()
-    },
-    async getDetail () {
-      const { data } = await getArticle(this.slug)
-      const { article } = data
-      Object.keys(this.article).forEach((key) => {
-        this.article[key] = article[key]
-      })
-      console.log(data)
     }
   }
 }
 </script>
+
+<style scoped>
+
+</style>
+
