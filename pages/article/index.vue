@@ -1,46 +1,33 @@
 <template>
   <div class="article-page">
-
-  <div class="banner">
-    <div class="container">
-
-      <h1>{{article.title}}</h1>
-
-      <ArticleMeta :article="article"/>
-
-    </div>
-  </div>
-
-  <div class="container page">
-
-    <div class="row article-content">
-      <div class="col-md-12" v-html="article.body">
+    <div class="banner">
+      <div class="container">
+        <h1>{{article.title}}</h1>
+        <ArticleMeta :article="article" />
       </div>
-      <ul class="tag-list">
-        <li class="tag-default tag-pill tag-outline" v-for="tag in article.tagList" :key="tag">
-          {{tag}}
-        </li>
-      </ul>
     </div>
-
-    <hr />
-
-    <div class="article-actions">
-      <ArticleMeta :article="article"/>
-    </div>
-
-    <div class="row">
-
-      <div class="col-xs-12 col-md-8 offset-md-2">
+    <div class="container page">
+      <div class="row article-content">
+        <div class="col-md-12" v-html="article.body">
+        </div>
+        <ul class="tag-list">
+          <li class="tag-default tag-pill tag-outline" v-for="tag in article.tagList" :key="tag">
+            {{tag}}
+          </li>
+        </ul>
+      </div>
+      <hr />
+      <div class="article-actions">
+        <ArticleMeta :article="article" />
+      </div>
+      <div class="row">
+        <div class="col-xs-12 col-md-8 offset-md-2">
           <ArticleComment v-if="user" :article="article" />
           <ArticleUnlogin v-else />
+        </div>
       </div>
-
     </div>
-
   </div>
-
-</div>
 </template>
 
 <script>
@@ -66,7 +53,7 @@ export default {
       article: article
     }
   },
-  head() {
+  head () {
     return {
       title: `${this.article.title} - RealWorld`,
       meta: [

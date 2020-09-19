@@ -2,22 +2,13 @@
   <div>
     <div class="col-xs-12 col-md-8 offset-md-2">
       <div show-authed="true" style="display: none;">
-        <list-errors from="$ctrl.commentForm.errors" class="ng-isolate-scope"
-          ><ul class="error-messages ng-hide" ng-show="$ctrl.errors">
-            <!-- ngRepeat: (field, errors) in $ctrl.errors -->
+        <list-errors from="$ctrl.commentForm.errors" class="ng-isolate-scope">
+          <ul class="error-messages ng-hide" ng-show="$ctrl.errors">
           </ul>
         </list-errors>
-        <form
-          class="card comment-form ng-pristine ng-valid"
-          ng-submit="$ctrl.addComment()"
-        >
+        <form class="card comment-form ng-pristine ng-valid" ng-submit="$ctrl.addComment()">
           <div class="card-block">
-            <textarea
-              class="form-control ng-pristine ng-untouched ng-valid ng-empty"
-              placeholder="Write a comment..."
-              rows="3"
-              ng-model="$ctrl.commentForm.body"
-            >
+            <textarea class="form-control ng-pristine ng-untouched ng-valid ng-empty" placeholder="Write a comment..." rows="3" ng-model="$ctrl.commentForm.body">
             </textarea>
           </div>
           <div class="card-footer">
